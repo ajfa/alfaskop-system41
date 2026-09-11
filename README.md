@@ -147,6 +147,19 @@ in full. Three things worth knowing if you go into it:
   actually writes as `11`, and has the IBM/UTS sense of one display adapter bit
   inverted.
 
+## Where to look
+
+- <https://github.com/MattisLind/alfaskop_emu> - the other Alfaskop project.
+  Worth being clear about what it is: preservation work with real hardware, not
+  an emulator. The schematics and the A91 dumps that unlocked several findings
+  here came from there.
+- <https://github.com/Datamuseum-DK/AutoArchaeologist> - the Danish museum's
+  media archaeology framework, where the decoder for this machine's diskettes
+  lives.
+
+The diskette images themselves come from Poul-Henning Kamp's preservation of the
+System 41 media: 19 eight inch volumes and 13 five and a quarter inch ones.
+
 ## Licence
 
 BSD-3-Clause, the same as MAME, whose driver and devices this extends.
