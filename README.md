@@ -28,10 +28,12 @@ PROM; its operating system is sent to it over the bus by the disk unit, one
 ## Contents
 
 ```
-patches/alfaskop-driver.patch   the driver, against MAME 0.288
-patches/mc68*.patch             the device fixes, also submitted upstream
-tools/                          measurement scripts (MAME Lua and Python)
-docs/DRAWINGS-INDEX.md          index of the 277 schematic sheets by title block
+patches/alfaskop-driver.patch           the driver, against MAME 0.288
+patches/alfaskop-du-memory-size.patch   the display unit's two memory boards, against 0.289
+patches/flopimg-fm-last-sector.patch    an FM format fix found here, against 0.289
+patches/mc68*.patch                     the device fixes, also submitted upstream
+tools/                                  measurement scripts (MAME Lua and Python)
+docs/DRAWINGS-INDEX.md                  index of the 277 schematic sheets by title block
 ```
 
 No Ericsson firmware, ROM or diskette image is included.
@@ -54,6 +56,32 @@ timing. Requiring a non-zero count in the arbitration took late requests from
 4 in 123475 to 0 in 116358, and the worst wait from 34 us to 11 us. An FD1771
 has one byte time, 32 us, so that is the difference between completing a
 multi-sector read and reporting lost data.
+
+## The display unit's memory
+
+The display unit was sold with two sizes of read/write memory and its operating
+software knows both. The sizing routine in the DUOS module walks upwards two
+bytes at a time until an address stops answering, and then accepts a top of
+either F000 or F680; anything else stops the IPL with `MRW ERROR` on the status
+line. The smaller board is not enough for every product: AlfaWord (4017-021)
+refuses to start on it and reports `Wrong Hardware configuration`.
+
+`patches/alfaskop-du-memory-size.patch` gives the unit both boards through
+MAME's own ram device, so `-ram 64K` is the larger one and `-ram 60K` the
+smaller, with the larger as the default. Main memory moves out of the address
+map and is installed in `machine_start`, where the top is capped at F680
+because the NVRAM, the I/O boards and the ROM live above it.
+
+This patch is against the driver as MAME 0.289 ships it, on its own. It is not
+meant to be applied on top of the driver patch above, which is against 0.288.
+
+## One more format fix
+
+`patches/flopimg-fm-last-sector.patch`, also against 0.289. `get_track_data_fm_pc()`
+iterates `sector < sector_count` while its MFM twin iterates `sector <= end_sector`,
+so the FM path drops the last sector of every track. The diskettes here are FM
+with 26 sectors of 128 bytes per track, and the last one carries data like any
+other.
 
 ## The video geometry
 
