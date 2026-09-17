@@ -42,14 +42,15 @@ No Ericsson firmware, ROM or diskette image is included.
 
 Emulating this machine exercised four MAME devices with real DMA for the first
 time and turned up problems in all of them. They are independent of this driver
-and have been submitted upstream:
+and were submitted upstream. Only the `mc6846` one was taken; the other three
+have been sitting open since August:
 
 | device | what was wrong | pull request |
 |---|---|---|
 | `mc6854` | status registers never refreshed on read; only the first byte of each frame transferred; AP not latched; transmit path never refreshed TDRA/TDSR; CTS interrupt under the wrong enable; receiver stalled forever if the drain died mid frame | [mame#15921](https://github.com/mamedev/mame/pull/15921) |
 | `mc6844` | only arbitrated in one state, so a single channel could hold the controller for good; a channel with an exhausted byte count still won arbitration; memory to device direction not implemented | [mame#15922](https://github.com/mamedev/mame/pull/15922) |
 | `mc6852` | the device never drove its interrupt output at all | [mame#15923](https://github.com/mamedev/mame/pull/15923) |
-| `mc6846` | CP2 latched an interrupt edge only while configured as an output | [mame#15924](https://github.com/mamedev/mame/pull/15924) |
+| `mc6846` | CP2 latched an interrupt edge only while configured as an output | [mame#15924](https://github.com/mamedev/mame/pull/15924), merged |
 
 The `mc6844` byte count check is the one to know about if you touch disk
 timing. Requiring a non-zero count in the arbitration took late requests from
@@ -75,13 +76,17 @@ because the NVRAM, the I/O boards and the ROM live above it.
 This patch is against the driver as MAME 0.289 ships it, on its own. It is not
 meant to be applied on top of the driver patch above, which is against 0.288.
 
+It went upstream as [mame#16107](https://github.com/mamedev/mame/pull/16107), so
+a MAME newer than 0.289 already has it.
+
 ## One more format fix
 
 `patches/flopimg-fm-last-sector.patch`, also against 0.289. `get_track_data_fm_pc()`
 iterates `sector < sector_count` while its MFM twin iterates `sector <= end_sector`,
 so the FM path drops the last sector of every track. The diskettes here are FM
 with 26 sectors of 128 bytes per track, and the last one carries data like any
-other.
+other. Upstream as [mame#16078](https://github.com/mamedev/mame/pull/16078), so
+this one is also already in a current MAME.
 
 ## The video geometry
 
