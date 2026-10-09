@@ -49,7 +49,7 @@ SUB = emu.add_machine_frame_notifier(function()
 		local f = field_of(e[1], e[2])
 		if f then f:set_value(1) end
 		pressed_at = manager.machine.time:as_double()
-		print(string.format("--- HELD DOWN keynum %d (%s %04X %s) desde t=%.4f",
+		print(string.format("--- HELD DOWN keynum %d (%s %04X %s) since t=%.4f",
 			KEY, e[1], e[2], e[3], pressed_at))
 	elseif frames == AT + HOLD then
 		local f = field_of(e[1], e[2])
